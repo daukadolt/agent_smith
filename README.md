@@ -48,11 +48,15 @@ Agent Smith supports multiple interfaces:
 - Perfect for developers and power users
 - Auto-reviews backlog on startup
 
+![CLI Demo](assets/cli_demo.gif)
+
 ### 🤖 Telegram Bot
 - Chat with Agent Smith via Telegram
 - Mobile-friendly with rich formatting
 - Commands: `/start`, `/help`, `/summary`
 - Natural language processing
+
+![Telegram Demo](assets/telegram_demo.gif)
 
 ## Usage
 
