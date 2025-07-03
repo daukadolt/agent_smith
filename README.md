@@ -19,25 +19,48 @@ Agent Smith is a proactive AI-powered task management assistant that helps you o
 
 2. **Set up environment variables**:
    ```bash
-   # Create .env file with your Airtable credentials
+   # Create .env file with your credentials
    AIRTABLE_API_KEY=your_api_key_here
    AIRTABLE_BASE_ID=your_base_id_here
    AIRTABLE_BACKLOG_TABLE_ID=your_table_id_here
    OPENAI_API_KEY=your_openai_key_here
+   
+   # For Telegram bot interface (optional):
+   TELEGRAM_BOT_TOKEN=your_telegram_bot_token
    ```
 
 3. **Run Agent Smith**:
    ```bash
+   # Interactive interface selection
    python main.py
+   
+   # Or start specific interface directly:
+   python main.py --cli         # Command line interface
+   python main.py --telegram    # Telegram bot (requires TELEGRAM_BOT_TOKEN)
    ```
+
+## Interfaces
+
+Agent Smith supports multiple interfaces:
+
+### 💻 CLI (Command Line Interface)
+- Interactive terminal-based interface
+- Perfect for developers and power users
+- Auto-reviews backlog on startup
+
+### 🤖 Telegram Bot
+- Chat with Agent Smith via Telegram
+- Mobile-friendly with rich formatting
+- Commands: `/start`, `/help`, `/summary`
+- Natural language processing
 
 ## Usage
 
-When you start Agent Smith, it will:
-1. **Automatically review your backlog** and provide a summary
-2. **Show task counts by status** and highlight any issues
-3. **Suggest cleanup actions** for better organization
-4. **Wait for your commands** in an interactive session
+When you start Agent Smith, you can:
+1. **Choose your interface** (CLI or Telegram)
+2. **Get automatic backlog review** and summary
+3. **Interact naturally** - just tell Agent Smith what you need
+4. **Use commands or natural language** to manage tasks
 
 ### Example Commands:
 - "Create a new task for updating the documentation"

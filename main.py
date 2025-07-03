@@ -3,75 +3,132 @@
 Agent Smith - Proactive AI Task Management Assistant
 
 Main entry point for the Agent Smith application.
+Supports multiple interfaces: CLI and Telegram Bot.
 """
 
-import logging
-from src.agents.custom.agent import Agent
-from src.agents.custom.tools.airtable_create_record_tool import AirtableCreateRecordTool
-from src.agents.custom.tools.airtable_get_all_records_tool import AirtableGetAllRecordsTool
-from src.agents.custom.tools.airtable_update_record_tool import AirtableUpdateRecordTool
-from src.agents.custom.tools.airtable_delete_record_tool import AirtableDeleteRecordTool
+import argparse
+import sys
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def show_interface_menu() -> str:
+    """Show interactive interface selection menu."""
+    print("🕴️ Agent Smith - Interface Selection")
+    print("=" * 40)
+    print("1. 💻 CLI (Command Line Interface)")
+    print("2. 🤖 Telegram Bot")
+    print("3. ❌ Exit")
+    print()
+    
+    while True:
+        try:
+            choice = input("Select interface (1-3): ").strip()
+            if choice == "1":
+                return "cli"
+            elif choice == "2":
+                return "telegram"
+            elif choice == "3":
+                print("👋 Goodbye!")
+                sys.exit(0)
+            else:
+                print("❌ Invalid choice. Please enter 1, 2, or 3.")
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+            sys.exit(0)
+
+
+def start_cli_interface():
+    """Start the CLI interface."""
+    try:
+        from interfaces.cli import CLIInterface
+        cli = CLIInterface()
+        cli.start()
+    except Exception as e:
+        print(f"❌ Failed to start CLI interface: {e}")
+        sys.exit(1)
+
+
+def start_telegram_interface():
+    """Start the Telegram bot interface."""
+    # Check if Telegram bot token is available
+    telegram_token = os.getenv('TELEGRAM_BOT_TOKEN')
+    if not telegram_token:
+        print("❌ TELEGRAM_BOT_TOKEN environment variable not set")
+        print("💡 To use Telegram interface:")
+        print("   1. Create a bot with @BotFather on Telegram")
+        print("   2. Set TELEGRAM_BOT_TOKEN=your_bot_token")
+        print("   3. Install telegram dependencies: pip install python-telegram-bot")
+        sys.exit(1)
+    
+    try:
+        from interfaces.telegram_bot import TelegramInterface
+        bot = TelegramInterface()
+        bot.start()
+    except Exception as e:
+        print(f"❌ Failed to start Telegram bot: {e}")
+        sys.exit(1)
+
 
 def main():
     """Main entry point for Agent Smith."""
-    # Set logger to WARNING level for cleaner interactive interface
-    logging.getLogger('src.agents.custom.agent').setLevel(logging.WARNING)
-    
-    print("Agent Smith, to your service")
-    agent = Agent(
-        model="gpt-4o",
-        system_message="""You are Agent Smith, a proactive task management assistant with personality! Your primary responsibilities are:
+    parser = argparse.ArgumentParser(
+        description="🕴️ Agent Smith - Proactive AI Task Management Assistant",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py              # Interactive interface selection
+  python main.py --cli         # Start CLI directly
+  python main.py --telegram    # Start Telegram bot directly
+  python main.py --help        # Show this help
 
-1. **📝 Task Management**: Help users create, view, and manage tasks in their Airtable backlog
-2. **🧹 Proactive Cleanup**: Whenever possible, review the backlog and suggest or perform cleanup actions:
-   - 🗑️ Remove completed tasks that are no longer needed
-   - 🔗 Identify and consolidate duplicate or similar tasks
-   - ⏰ Flag overdue tasks and suggest updates
-   - 📊 Organize tasks by priority or due date
-   - ❓ Remove tasks with incomplete or unclear information
-
-3. **🛠️ Available Tools**: Use these tools efficiently:
-   - `airtable_get_all_records`: Review the current backlog
-   - `create_airtable_record`: Add new tasks with proper fields (Name, Notes, Status, Due date/time)
-   - `update_airtable_record`: Modify existing tasks (change status, update notes, set due dates, etc.)
-   - `delete_airtable_record`: Remove completed or unnecessary tasks
-
-4. **✨ Best Practices**:
-   - Always check the backlog before creating new tasks to avoid duplicates
-   - Suggest improvements to task descriptions and organization
-   - Be proactive in maintaining a clean, organized backlog
-   - Ask clarifying questions when task requirements are unclear
-
-**🎨 Communication Style**:
-- Use emojis liberally to make responses engaging and visual
-- Format responses with clear sections, bullet points, and visual hierarchy
-- Use status emojis: ✅ (Done), 🔄 (In Progress), 📝 (Todo), ⚠️ (Issues), 🚨 (Urgent)
-- Make task counts and statistics visually appealing
-- Use progress bars or visual indicators when helpful
-- Be encouraging and positive while being efficient
-
-Be helpful, efficient, and maintain a clean, organized task management system with style! 🕴️""",
-        tools=[AirtableCreateRecordTool(), AirtableGetAllRecordsTool(), AirtableUpdateRecordTool(), AirtableDeleteRecordTool()],
+Environment Variables:
+  TELEGRAM_BOT_TOKEN           # Required for Telegram bot interface
+  OPENAI_API_KEY              # Required for AI functionality
+  AIRTABLE_API_KEY            # Required for Airtable integration
+  AIRTABLE_BASE_ID            # Required for Airtable integration
+  AIRTABLE_BACKLOG_TABLE_ID   # Required for Airtable integration
+        """
     )
     
-    # Automatically review backlog and provide summary
-    print("\n🔍 Reviewing your backlog...")
-    backlog_summary = agent.run("🔍 Please review my current backlog and provide an engaging summary with emojis! Include: 📊 task counts by status, ⏰ any overdue items, and 🧹 suggestions for cleanup or organization. Make it visually appealing and easy to scan!")
-    if backlog_summary:
-        print(f"\n📋 Backlog Summary:\n{backlog_summary}")
+    # Interface selection arguments
+    interface_group = parser.add_mutually_exclusive_group()
+    interface_group.add_argument(
+        "--cli", 
+        action="store_true", 
+        help="Start CLI (Command Line Interface) directly"
+    )
+    interface_group.add_argument(
+        "--telegram", 
+        action="store_true", 
+        help="Start Telegram bot interface directly"
+    )
     
-    print("\n" + "="*50)
-    print("Ready for your commands! (Type 'quit' or 'exit' to end)")
+    # Parse arguments
+    args = parser.parse_args()
     
-    # Interactive loop
-    user_in = input("> ")
-    user_in = user_in.strip()
-    while user_in not in ("quit", "exit"):
-        result = agent.run(user_in)
-        if result:
-            print(result)
-        user_in = input("> ")
-        user_in = user_in.strip()
+    # Determine which interface to start
+    if args.cli:
+        interface = "cli"
+    elif args.telegram:
+        interface = "telegram"
+    else:
+        # No arguments provided, show interactive menu
+        interface = show_interface_menu()
+    
+    # Start the selected interface
+    print(f"\n🚀 Starting {interface.upper()} interface...\n")
+    
+    if interface == "cli":
+        start_cli_interface()
+    elif interface == "telegram":
+        start_telegram_interface()
+    else:
+        print(f"❌ Unknown interface: {interface}")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main() 
