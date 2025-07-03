@@ -55,15 +55,7 @@ I'm your proactive AI task management assistant! I can help you:
 Just send me a message to get started! 🚀"""
         
         await self.send_message_async(update, welcome_message)
-        
-        # Auto-send backlog summary
-        try:
-            summary = self.get_backlog_summary()
-            if summary:
-                await self.send_message_async(update, f"📋 **Current Backlog:**\n{summary}")
-        except Exception as e:
-            await self.send_message_async(update, f"⚠️ Couldn't get backlog summary: {str(e)}")
-    
+
     async def _help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /help command."""
         help_message = """🛠️ **Agent Smith Commands & Usage**
