@@ -2,8 +2,8 @@ from typing import Dict
 
 from openai.types.chat import ChatCompletionToolParam
 
-from src.agents.custom.tools.tool import Tool
-from src.agents.custom.tools.airtable_schemas import build_fields_parameter
+from .tool import Tool
+from .airtable_schemas import build_fields_parameter
 
 import src.services.airtable_service as airtable_service
 

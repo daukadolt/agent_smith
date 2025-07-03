@@ -1,6 +1,6 @@
 from openai.types.chat import ChatCompletionToolParam
 
-from src.agents.custom.tools.tool import Tool
+from .tool import Tool
 
 import src.services.airtable_service as airtable_service
 
