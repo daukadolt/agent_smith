@@ -4,8 +4,6 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 from functools import wraps
 
-from typing_extensions import Writer
-
 load_dotenv()
 
 from pyairtable import Api
