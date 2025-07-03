@@ -51,4 +51,4 @@ def delete_record(table_name: str, record_id: str) -> RecordDeletedDict:
 
 @rate_limit
 def update_record(table_name: str, record_id: str, fields: WritableFields) -> RecordDict:
-    return base.table(table_name).update(record_id, fields, replace=True)
+    return base.table(table_name).update(record_id, fields)
