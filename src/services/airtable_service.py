@@ -1,10 +1,7 @@
 import os
 import time
 from dataclasses import dataclass
-from dotenv import load_dotenv
 from functools import wraps
-
-load_dotenv()
 
 from pyairtable import Api
 from pyairtable.api.types import WritableFields, RecordDict, RecordDeletedDict

@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from src.services.airtable_service import base, create_record, delete_record, get_all_records
 
 def test_have_access_to_one_table_only():
