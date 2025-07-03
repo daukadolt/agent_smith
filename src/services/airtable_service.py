@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 from functools import wraps
 
+from typing_extensions import Writer
+
 load_dotenv()
 
 from pyairtable import Api
@@ -51,3 +53,7 @@ def get_all_records(table_name: str) -> list[RecordDict]:
 @rate_limit
 def delete_record(table_name: str, record_id: str) -> RecordDeletedDict:
     return base.table(table_name).delete(record_id)
+
+@rate_limit
+def update_record(table_name: str, record_id: str, fields: WritableFields) -> RecordDict:
+    return base.table(table_name).update(record_id, fields, replace=True)

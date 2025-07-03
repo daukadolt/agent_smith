@@ -4,6 +4,7 @@ from openai.types.shared_params import FunctionDefinition
 from openai.types.chat import ChatCompletionToolParam
 
 from src.agents.custom.tools.tool import Tool
+from src.agents.custom.tools.airtable_schemas import build_fields_parameter
 import src.services.airtable_service as airtable_service
 
 
@@ -16,40 +17,10 @@ class AirtableCreateRecordTool(Tool):
             parameters={
                 "type": "object",
                 "properties": {
-                    "fields": {
-                        "type": "object",
-                        "description": "A dictionary of Airtable field names and their values.",
-                        "properties": {
-                            "Name": {
-                                "type": "string",
-                                "description": "A short name or title for the record."
-                            },
-                            "Notes": {
-                                "type": "string",
-                                "description": "Additional details or description."
-                            },
-                            "Status": {
-                                "type": "string",
-                                "enum": ["Todo", "In progress", "Done"],
-                                "description": "The current status of the record."
-                            },
-                            "Attachments": {
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "url": {
-                                            "type": "string",
-                                            "description": "Publicly accessible URL to an attachment."
-                                        }
-                                    },
-                                    "required": ["url"]
-                                },
-                                "description": "List of file URLs to attach to the record."
-                            }
-                        },
-                        "required": ["Name", "Notes"]
-                    }
+                    "fields": build_fields_parameter(
+                        description="A dictionary of Airtable field names and their values.",
+                        required_fields=["Name", "Notes"]
+                    )
                 },
                 "required": ["fields"],
             },
